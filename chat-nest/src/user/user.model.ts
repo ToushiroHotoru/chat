@@ -9,4 +9,4 @@ export const UserSchema = new Schema(
   // { timestamps: true },
 );
 
-export const UserModel = model<UserDto>('user', UserSchema, 'Users');
+export const UserModel = model<UserDto>('user', UserSchema, 'users');

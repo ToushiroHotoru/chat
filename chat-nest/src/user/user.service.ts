@@ -7,12 +7,6 @@ import { UserDto, UserDtoPost, UserDtoPatch } from './user.dto';
 @Injectable()
 export class UserService {
   async create(body: UserDtoPost): Promise<UserDto> {
-    // if (!isAdmin) {
-    //   throw new ForbiddenException(
-    //     'у вас нет прав на выполнение данной операции',
-    //   );
-    // }
-
     return UserModel.create(body);
   }
 
@@ -23,6 +17,10 @@ export class UserService {
   async readOne(id: string) {
     await isValid(id, UserModel);
     return UserModel.findOne({ _id: id });
+  }
+
+  async readOneByLogin(login: string) {
+    return UserModel.findOne({ login: login });
   }
 
   async update(id: string, body: UserDtoPatch) {

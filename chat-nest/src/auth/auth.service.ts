@@ -3,7 +3,7 @@ import { Injectable, ForbiddenException } from '@nestjs/common';
 import { isValid } from '@/utils/isValid';
 import { LoginDto, RegisterDto } from './auth.dto';
 import { UserService } from '@/user/user.service';
-import jwt from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken';
 import { UserDto } from '@/user/user.dto';
 
 @Injectable()
@@ -12,19 +12,23 @@ export class AuthService {
 
   async login(body: LoginDto) {
     const { login, password } = body;
-    const isExists: UserDto | null = await this.UserService.readOne(login);
+    const isExists: UserDto | null =
+      await this.UserService.readOneByLogin(login);
     if (!isExists) throw new ForbiddenException('User not found');
 
     const isValidPass: boolean = isExists.password === password;
     if (!isValidPass) throw new ForbiddenException('Invalid password');
 
-    return jwt.sign({ ...isExists }, 'shhhhh');
+    const token = jwt.sign({ ...isExists }, 'shhhhh');
+
+    return { jwt: token };
   }
 
   async register(body: RegisterDto) {
     const { login, password } = body;
 
-    const isExists: UserDto | null = await this.UserService.readOne(login);
+    const isExists: UserDto | null =
+      await this.UserService.readOneByLogin(login);
     if (isExists) throw new ForbiddenException('User already exists');
 
     const isValidPass: boolean = /^[a-zA-Z0-9]{3,10}$/.test(password);
@@ -32,15 +36,18 @@ export class AuthService {
 
     const newUser: UserDto = await this.UserService.create({ login, password });
 
-    return jwt.sign({ ...newUser }, 'shhhhh');
+    const token = jwt.sign({ ...newUser }, 'shhhhh');
+
+    return { jwt: token };
   }
 
   async isAuthorized(token: string) {
     try {
-      jwt.verify(token, 'shhhhh');
+      const user = jwt.verify(token, 'shhhhh');
+      console.log(user, '<<<user');
+      return user;
     } catch (e) {
       throw new ForbiddenException('Unauthorized request');
     }
-    return true;
   }
 }

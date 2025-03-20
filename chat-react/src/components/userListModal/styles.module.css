@@ -1,0 +1,9 @@
+.user{
+    cursor: pointer;
+    color: whitesmoke;
+}
+
+.list{
+    display: flex;
+    flex-direction: column;
+}
