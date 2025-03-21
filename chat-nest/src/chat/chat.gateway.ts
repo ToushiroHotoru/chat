@@ -6,9 +6,11 @@ import {
   ConnectedSocket,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { MessageService } from '@/message/message.service';
 
 @WebSocketGateway({ cors: true })
 export class ChatGateway {
+  constructor(private MessageService: MessageService) {}
   @WebSocketServer()
   server: Server;
 
@@ -24,10 +26,20 @@ export class ChatGateway {
 
   // Обработка сообщений в конкретном чате
   @SubscribeMessage('message')
-  handleMessage(
-    @MessageBody() { chatId, message }: { chatId: string; message: string },
+  async handleMessage(
+    @MessageBody()
+    {
+      chatId,
+      message,
+      userId,
+    }: { chatId: string; message: string; userId: string },
     @ConnectedSocket() client: Socket,
-  ): void {
-    this.server.to(chatId).emit('message', message); // Отправляем сообщение только в этот чат
+  ): Promise<void> {
+    this.server.to(chatId).emit('message', { text: message, userId: userId }); // Отправляем сообщение только в этот чат
+    await this.MessageService.create({
+      chatId: chatId,
+      text: message,
+      userId: userId,
+    });
   }
 }

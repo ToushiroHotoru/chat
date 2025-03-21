@@ -10,7 +10,10 @@ export class UserService {
     return UserModel.create(body);
   }
 
-  async read() {
+  async read(userNotId?: string) {
+    if (userNotId) {
+      return UserModel.find({ _id: { $ne: userNotId } });
+    }
     return UserModel.find({});
   }
 
@@ -20,7 +23,7 @@ export class UserService {
   }
 
   async readOneByLogin(login: string) {
-    return UserModel.findOne({ login: login });
+    return UserModel.findOne({ login: login }).lean();
   }
 
   async update(id: string, body: UserDtoPatch) {

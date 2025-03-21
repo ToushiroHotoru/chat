@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Body,
+  Query,
   Param,
   Patch,
   Delete,
@@ -15,6 +16,7 @@ import {
 import {
   ApiTags,
   ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiOperation,
   ApiBearerAuth,
@@ -32,8 +34,13 @@ export class UserController {
 
   @Get()
   @ApiOperation({ summary: 'Получить пользователей' })
-  async read(): Promise<UserDto[]> {
-    return await this.UserService.read();
+  @ApiQuery({
+    name: 'userNotId',
+    required: false,
+    description: 'id пользователя',
+  })
+  async read(@Query('userNotId') userNotId: string): Promise<UserDto[]> {
+    return await this.UserService.read(userNotId);
   }
 
   @Get(':id')

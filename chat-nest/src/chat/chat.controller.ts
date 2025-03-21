@@ -23,6 +23,7 @@ import {
 // import { IsAdmin } from '@/utils/@isAdmin';
 import { ChatService } from './chat.service';
 import { ChatDto, ChatDtoPost, ChatDtoPatch } from './chat.dto';
+import { Bearer } from '@/utils/@bearer';
 
 @ApiTags('chats')
 @Controller('chats')
@@ -32,8 +33,8 @@ export class ChatController {
 
   @Get()
   @ApiOperation({ summary: 'Получить чаты' })
-  async read(): Promise<ChatDto[]> {
-    return await this.ChatService.read();
+  async read(@Bearer() token: string): Promise<ChatDto[]> {
+    return await this.ChatService.read(token);
   }
 
   @Get(':id')

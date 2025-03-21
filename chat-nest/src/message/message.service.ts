@@ -11,7 +11,7 @@ export class MessageService {
   }
 
   async read() {
-    return MessageModel.find({});
+    return MessageModel.find({}).sort({ index: 1 });
   }
 
   async readOne(id: string) {

@@ -17,8 +17,8 @@ export class MessageDto {
 export class MessageDtoPost {
   @ApiProperty()
   @IsNumber()
-  @IsNotEmpty({ message: 'Поле index отсутствует' })
-  index: number;
+  @IsOptional({ message: 'Поле index отсутствует' })
+  index?: number;
   @ApiProperty()
   @IsString()
   @IsNotEmpty({ message: 'Поле text отсутствует' })

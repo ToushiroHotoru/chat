@@ -3,6 +3,7 @@ import { Injectable, ForbiddenException } from '@nestjs/common';
 import { ChatModel } from './chat.model';
 import { isValid } from '@/utils/isValid';
 import { ChatDto, ChatDtoPost, ChatDtoPatch } from './chat.dto';
+import { verifyToken } from '@/utils/verifyToken';
 
 @Injectable()
 export class ChatService {
@@ -10,8 +11,9 @@ export class ChatService {
     return ChatModel.create(body);
   }
 
-  async read() {
-    return ChatModel.find({});
+  async read(token: string) {
+    const user: any = verifyToken(token);
+    return ChatModel.find({ users: { $in: [user._id] } });
   }
 
   async readOne(id: string) {
