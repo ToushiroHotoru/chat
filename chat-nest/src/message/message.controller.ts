@@ -4,6 +4,7 @@ import {
   Post,
   Body,
   Param,
+  Query,
   Patch,
   Delete,
   UsePipes,
@@ -15,6 +16,7 @@ import {
 import {
   ApiTags,
   ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiOperation,
   ApiBearerAuth,
@@ -32,8 +34,9 @@ export class MessageController {
 
   @Get()
   @ApiOperation({ summary: 'Получить пользователей' })
-  async read(): Promise<MessageDto[]> {
-    return await this.MessageService.read();
+  @ApiQuery({ name: 'chatId', required: true, description: 'id чата' })
+  async read(@Query('chatId') chatId: string): Promise<MessageDto[]> {
+    return await this.MessageService.read(chatId);
   }
 
   @Get(':id')

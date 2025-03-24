@@ -44,7 +44,7 @@ export class AuthService {
   async isAuthorized(token: string) {
     try {
       const user = jwt.verify(token, 'shhhhh');
-      console.log(user, '<<<user');
+
       return user;
     } catch (e) {
       throw new ForbiddenException('Unauthorized request');

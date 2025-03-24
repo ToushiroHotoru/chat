@@ -10,8 +10,8 @@ export class MessageService {
     return MessageModel.create(body);
   }
 
-  async read() {
-    return MessageModel.find({}).sort({ index: 1 });
+  async read(chatId: string) {
+    return MessageModel.find({ chatId }).sort({ index: 1 });
   }
 
   async readOne(id: string) {

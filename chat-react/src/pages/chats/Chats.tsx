@@ -1,7 +1,9 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useContext } from "react";
 import { useCookies } from "react-cookie";
 import styles from "./styles.module.css";
 import { NavLink, useNavigate } from "react-router";
+import socket from "../../socket";
+import { UserContext } from "../../App";
 
 import UserListModal from "../../components/userListModal/UserListModal";
 
@@ -9,6 +11,8 @@ export default function Chats() {
   const [isModalOn, setIsModalOn] = useState<boolean>(false);
   const [chats, setChats] = useState<any>([]);
   const [cookies, setCookie, removeCookie] = useCookies(["jwt"]);
+
+  const { user } = useContext(UserContext);
 
   const navigate = useNavigate();
 
@@ -35,6 +39,25 @@ export default function Chats() {
     navigate("/");
   }
 
+  const handleChat = (chat: any) => {
+    setChats((prev: any) => [...prev, chat]);
+  };
+
+  useEffect(() => {
+    socket.connect();
+    // Присоединяемся к чату после монтирования компонента
+    if (user._id) {
+      socket.emit("newChats", user._id);
+    }
+
+    socket.on("chat", handleChat);
+
+    return () => {
+      socket.off("chat"); // Очищаем обработчик сообщений при размонтировании
+      socket.disconnect();
+    };
+  }, [user._id]);
+
   useEffect(() => {
     getChats();
   }, []);
@@ -47,8 +70,8 @@ export default function Chats() {
         <button onClick={() => setIsModalOn(true)}>New chat</button>
         {isModalOn && <UserListModal callback={callbackfunc} />}
       </div>
-      <div>
-        <h2>list of chats</h2>
+      <h2>list of chats</h2>
+      <div className={styles.list}>
         {chats.map((item: any, i: number) => (
           <NavLink
             to={`/chats/${item._id}`}

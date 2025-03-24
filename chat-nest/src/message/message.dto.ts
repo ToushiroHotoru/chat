@@ -48,6 +48,6 @@ export class MessageDtoPatch {
   chatId?: string;
   @ApiProperty()
   @IsString()
-  @IsNotEmpty({ message: 'Поле userId отсутствует' })
-  userId: string;
+  @IsOptional({ message: 'Поле userId отсутствует' })
+  userId?: string;
 }

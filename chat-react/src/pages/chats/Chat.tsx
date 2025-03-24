@@ -1,10 +1,9 @@
-import { useState, useEffect, useContext } from "react";
-import { io } from "socket.io-client";
+import { useState, useEffect, useContext, useCallback } from "react";
 import { useParams } from "react-router";
 import { UserContext } from "../../App";
 import styles from "./styles.module.css";
-
-const socket = io("http://localhost:3000"); // Подключаемся к серверу
+import socket from "../../socket";
+import Message from "../../components/message/Message";
 
 const Chat = () => {
   const { id: chatId } = useParams(); // Получаем chatId из URL
@@ -13,6 +12,7 @@ const Chat = () => {
   const { user } = useContext(UserContext);
 
   useEffect(() => {
+    socket.connect();
     // Присоединяемся к чату после монтирования компонента
     if (chatId) {
       socket.emit("joinChat", chatId);
@@ -20,6 +20,7 @@ const Chat = () => {
 
     return () => {
       socket.off("message"); // Очищаем обработчик сообщений при размонтировании
+      socket.disconnect();
     };
   }, [chatId]);
 
@@ -45,7 +46,9 @@ const Chat = () => {
 
   const getMessages = async () => {
     try {
-      const res = await fetch("http://localhost:3000/messages");
+      const res = await fetch(
+        `http://localhost:3000/messages?chatId=${chatId}`
+      );
 
       const result = await res.json();
       setMessages(result);
@@ -63,15 +66,14 @@ const Chat = () => {
       <h2>Чат ID: {chatId}</h2>
 
       <div className={styles.messageList}>
-        {messages.map((msg: any, index: number) => (
-          <div
-            key={index}
-            className={
-              msg.userId === user._id ? styles.messagePersonal : styles.message
-            }
-          >
-            {msg.text}
-          </div>
+        {messages.map((msg: any) => (
+          <Message
+            key={msg._id}
+            msg={msg}
+            isPersonal={msg.userId === user._id}
+            chatId={chatId}
+            setMessages={setMessages}
+          />
         ))}
       </div>
 

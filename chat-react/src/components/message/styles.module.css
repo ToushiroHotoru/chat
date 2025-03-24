@@ -1,0 +1,13 @@
+.message {
+  position: relative;
+  left: 0;
+  background-color: red;
+  color: whitesmoke;
+}
+
+.messagePersonal {
+  position: relative;
+  right: 0;
+  background-color: blue;
+  color: whitesmoke;
+}
