@@ -1,13 +1,37 @@
 .message {
   position: relative;
-  left: 0;
-  background-color: red;
   color: whitesmoke;
+  margin: 20px 0 0 0;
+  padding: 0 10px 0 10px;
+  height: 40px;
+  width: fit-content;
+  display: flex;
+  border-radius: 10px;
+  align-items: center;
 }
 
-.messagePersonal {
-  position: relative;
-  right: 0;
+.interlocutor {
+  background-color: red;
+}
+
+.personal {
+  margin: 20px 0 0 auto;
   background-color: blue;
-  color: whitesmoke;
+}
+
+.wrapper {
+  position: relative;
+  display: flex;
+}
+
+.userNameInterlocutor {
+  position: relative;
+  margin: 0 10px 0 0;
+  top: 27px;
+}
+
+.userNamePersonal {
+  position: relative;
+  margin: 0 0 0 10px;
+  top: 27px;
 }

@@ -19,7 +19,6 @@ export class ChatGateway {
   @WebSocketServer()
   server: Server;
 
-  // Подключение к конкретному чату
   @SubscribeMessage('joinChat')
   handleJoinChat(
     @MessageBody() chatId: string,
@@ -29,7 +28,6 @@ export class ChatGateway {
     client.emit('joinedChat', chatId);
   }
 
-  // Обработка сообщений в конкретном чате
   @SubscribeMessage('message')
   async handleMessage(
     @MessageBody()
@@ -40,37 +38,56 @@ export class ChatGateway {
     }: { chatId: string; message: string; userId: string },
     @ConnectedSocket() client: Socket,
   ): Promise<void> {
-    this.server.to(chatId).emit('message', { text: message, userId: userId }); // Отправляем сообщение только в этот чат
-    await this.MessageService.create({
-      chatId: chatId,
-      text: message,
-      userId: userId,
-    });
+    try {
+      const newMessage = await this.MessageService.create({
+        chatId: chatId,
+        text: message,
+        userId: userId,
+      });
+
+      this.server.to(chatId).except(client.id).emit('message', {
+        text: message,
+        userId: userId,
+        createdAt: newMessage.createdAt,
+        _id: newMessage._id,
+      });
+
+      client.emit('message', {
+        text: message,
+        userId: userId,
+        createdAt: newMessage.createdAt,
+        _id: newMessage._id,
+      });
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   @SubscribeMessage('editMessage')
   async handleEditMessage(
     @MessageBody()
-    {
-      messageId,
-      text,
-      chatId,
-    }: { messageId: string; text: string; chatId: string },
+    { _id, text, chatId }: { _id: string; text: string; chatId: string },
     @ConnectedSocket() client: Socket,
   ): Promise<void> {
-    console.log('zero');
-    this.server.to(chatId).emit('editMessage', { text, messageId });
-    await this.MessageService.update(messageId, { text });
+    try {
+      this.server.to(chatId).emit('editMessage', { text, _id });
+      await this.MessageService.update(_id, { text });
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   @SubscribeMessage('deleteMessage')
   async handleDeleteMessage(
-    @MessageBody()
-    { messageId, chatId }: { messageId: string; chatId: string },
+    @MessageBody() { _id, chatId }: { _id: string; chatId: string },
     @ConnectedSocket() client: Socket,
   ): Promise<void> {
-    this.server.to(chatId).emit('deleteMessage', { messageId });
-    await this.MessageService.delete(messageId);
+    try {
+      this.server.to(chatId).emit('deleteMessage', { _id });
+      await this.MessageService.delete(_id);
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   @SubscribeMessage('newChats')
@@ -88,13 +105,18 @@ export class ChatGateway {
     { reciverId, senderId }: { reciverId: string; senderId: string },
     @ConnectedSocket() client: Socket,
   ) {
-    const payload: ChatDtoPost = {
-      name: new Date().toDateString(),
-      users: [reciverId, senderId],
-    };
+    try {
+      const payload: ChatDtoPost = {
+        name: new Date().toDateString(),
+        users: [reciverId, senderId],
+      };
 
-    const newChat = await this.ChatService.create(payload);
+      const newChat = await this.ChatService.create(payload);
 
-    this.server.to(reciverId).emit('chat', newChat);
+      this.server.to(reciverId).except(client.id).emit('chat', newChat);
+      client.emit('chat', newChat);
+    } catch (err) {
+      console.log(err);
+    }
   }
 }

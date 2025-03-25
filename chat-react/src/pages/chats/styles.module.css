@@ -25,3 +25,7 @@
   display: flex;
   flex-direction: column;
 }
+
+.inputForm {
+  margin: 20px 0 0 0;
+}

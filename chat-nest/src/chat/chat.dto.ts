@@ -7,7 +7,7 @@ export class ChatDto {
   @ApiProperty({ example: 'chat' })
   name: string;
   @ApiProperty({ example: '89fu49h30f9hh9324' })
-  users: Array<string>;
+  users: string[];
 }
 
 export class ChatDtoPost {
@@ -18,7 +18,7 @@ export class ChatDtoPost {
   @ApiProperty()
   @IsArray()
   @IsNotEmpty({ message: 'Поле users отсутствует' })
-  users: Array<string>;
+  users: string[];
 }
 
 export class ChatDtoPatch {
@@ -29,5 +29,5 @@ export class ChatDtoPatch {
   @ApiProperty({ required: false })
   @IsArray()
   @IsOptional()
-  users?: Array<string>;
+  users?: string[];
 }

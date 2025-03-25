@@ -12,6 +12,10 @@ export class MessageDto {
   chatId: string;
   @ApiProperty({ example: '89fu49h30f9hh9324' })
   userId: string;
+  @ApiProperty({ example: 'date obj' })
+  createdAt: Date;
+  @ApiProperty({ example: 'date obj' })
+  updatedAt: Date;
 }
 
 export class MessageDtoPost {

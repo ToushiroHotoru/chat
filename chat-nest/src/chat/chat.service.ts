@@ -18,7 +18,7 @@ export class ChatService {
 
   async readOne(id: string) {
     await isValid(id, ChatModel);
-    return ChatModel.findOne({ _id: id });
+    return ChatModel.findOne({ _id: id }).populate('users');
   }
 
   async update(id: string, body: ChatDtoPatch) {

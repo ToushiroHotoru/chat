@@ -6,10 +6,11 @@ import socket from "../../socket";
 import { UserContext } from "../../App";
 
 import UserListModal from "../../components/userListModal/UserListModal";
+import { ChatType } from "../../Types";
 
 export default function Chats() {
   const [isModalOn, setIsModalOn] = useState<boolean>(false);
-  const [chats, setChats] = useState<any>([]);
+  const [chats, setChats] = useState<ChatType[]>([]);
   const [cookies, setCookie, removeCookie] = useCookies(["jwt"]);
 
   const { user } = useContext(UserContext);
@@ -39,13 +40,13 @@ export default function Chats() {
     navigate("/");
   }
 
-  const handleChat = (chat: any) => {
-    setChats((prev: any) => [...prev, chat]);
+  const handleChat = (chat: ChatType) => {
+    setChats((prev: ChatType[]) => [...prev, chat]);
   };
 
   useEffect(() => {
     socket.connect();
-    // Присоединяемся к чату после монтирования компонента
+
     if (user._id) {
       socket.emit("newChats", user._id);
     }
@@ -53,8 +54,7 @@ export default function Chats() {
     socket.on("chat", handleChat);
 
     return () => {
-      socket.off("chat"); // Очищаем обработчик сообщений при размонтировании
-      socket.disconnect();
+      socket.off("chat", handleChat);
     };
   }, [user._id]);
 
@@ -72,10 +72,10 @@ export default function Chats() {
       </div>
       <h2>list of chats</h2>
       <div className={styles.list}>
-        {chats.map((item: any, i: number) => (
+        {chats.map((item: ChatType) => (
           <NavLink
             to={`/chats/${item._id}`}
-            key={i}
+            key={item._id}
             className={styles.chatItem}
           >
             {item.name}

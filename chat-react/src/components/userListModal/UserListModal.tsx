@@ -3,6 +3,7 @@ import styles from "./styles.module.css";
 import { UserContext } from "../../App";
 import { useNavigate } from "react-router";
 import { io } from "socket.io-client";
+import { UserType } from "../../Types";
 
 type Props = {
   callback: (value: boolean) => void;
@@ -11,7 +12,7 @@ type Props = {
 const socket = io("http://localhost:3000");
 
 export default function UserListModal({ callback }: Props) {
-  const [users, setUsers] = useState<any>([]);
+  const [users, setUsers] = useState<UserType[]>([]);
   const { user, setUser } = useContext(UserContext);
   const [reciverId, setReciverId] = useState("");
   const navigate = useNavigate();
@@ -30,13 +31,12 @@ export default function UserListModal({ callback }: Props) {
   }
 
   useEffect(() => {
-    // Присоединяемся к чату после монтирования компонента
     if (user._id) {
       socket.emit("newChats", reciverId);
     }
 
     return () => {
-      socket.off("chat"); // Очищаем обработчик сообщений при размонтировании
+      socket.off("chat");
     };
   }, [reciverId]);
 
@@ -66,14 +66,14 @@ export default function UserListModal({ callback }: Props) {
 
   return (
     <div>
-      {users.map((item: any, i: number) => {
+      {users.map((user: UserType) => {
         return (
           <div
-            key={i}
-            onClick={() => newChat(item._id)}
+            key={user._id}
+            onClick={() => newChat(user._id)}
             className={styles.user}
           >
-            {item.login}
+            {user.login}
           </div>
         );
       })}

@@ -5,11 +5,12 @@ import { Routes, Route, useNavigate } from "react-router";
 import Auth from "./pages/auth/Auth";
 import Chats from "./pages/chats/Chats";
 import { useCookies } from "react-cookie";
+import { UserType } from "./Types";
 
 export const UserContext = createContext<any>(null);
 
 function App() {
-  const [user, setUser] = useState<any>({});
+  const [user, setUser] = useState<UserType | {}>({});
   const [cookies, setCookie, removeCookie] = useCookies(["jwt"]);
 
   const navigate = useNavigate();
@@ -51,16 +52,6 @@ function App() {
           <Route index element={<Auth />} />
           <Route path="chats" element={<Chats />} />
           <Route path="chats/:id" element={<Chat />} />
-          {/* <Route element={<AuthLayout />}>
-          <Route path="login" element={<Login />} />
-          <Route path="register" element={<Register />} />
-        </Route>
-
-        <Route path="concerts">
-          <Route index element={<ConcertsHome />} />
-          <Route path=":city" element={<City />} />
-          <Route path="trending" element={<Trending />} />
-        </Route> */}
         </Routes>
       </>
     </UserContext.Provider>
