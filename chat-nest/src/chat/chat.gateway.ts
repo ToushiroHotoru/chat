@@ -71,7 +71,7 @@ export class ChatGateway {
   ): Promise<void> {
     try {
       this.server.to(chatId).emit('editMessage', { text, _id });
-      await this.MessageService.update(_id, { text });
+      await this.MessageService.update(_id, { text, isEdited: true });
     } catch (err) {
       console.log(err);
     }

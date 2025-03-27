@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional, IsNotEmpty, IsNumber } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsNotEmpty,
+  IsNumber,
+  IsBoolean,
+} from 'class-validator';
 
 export class MessageDto {
   @ApiProperty({ example: '89fu49h30f9hh9324' })
@@ -8,6 +14,8 @@ export class MessageDto {
   index: number;
   @ApiProperty({ example: 'hello' })
   text: string;
+  @ApiProperty({ example: 'false' })
+  isEdited: boolean;
   @ApiProperty({ example: '89fu49h30f9hh9324' })
   chatId: string;
   @ApiProperty({ example: '89fu49h30f9hh9324' })
@@ -46,6 +54,10 @@ export class MessageDtoPatch {
   @IsString()
   @IsOptional()
   text?: string;
+  @ApiProperty({ required: false })
+  @IsBoolean()
+  @IsOptional()
+  isEdited?: boolean;
   @ApiProperty({ required: false })
   @IsString()
   @IsOptional()

@@ -5,6 +5,7 @@ export const MessageSchema = new Schema(
   {
     index: { type: Number, required: false, index: 1 },
     text: { type: String, required: true },
+    isEdited: { type: Boolean, required: false, default: false },
     chatId: { type: Schema.Types.ObjectId, ref: 'chat', required: true },
     userId: { type: Schema.Types.ObjectId, ref: 'user', required: true },
   },

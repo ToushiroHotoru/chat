@@ -26,6 +26,7 @@ export default function Message({ isPersonal, msg, chat, setMessages }: Props) {
       const arr = prev.map((item: MessageType) => {
         if (item._id == msg._id) {
           item.text = editedMessage;
+          item.isEdited = true;
         }
 
         return item;
@@ -99,7 +100,9 @@ export default function Message({ isPersonal, msg, chat, setMessages }: Props) {
           styles.message
         }`}
       >
-        {!isChangeOn && <div>{msg.text}</div>}
+        {!isChangeOn && (
+          <div>{`${msg.text} ${msg.isEdited ? "(ред.)" : ""}`}</div>
+        )}
         {isChangeOn && (
           <input
             type="text"

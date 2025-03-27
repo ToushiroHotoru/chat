@@ -62,8 +62,6 @@ export default function Chats() {
     getChats();
   }, []);
 
-  if (!chats) return <div>no chats</div>;
-
   return (
     <div>
       <div>
@@ -71,17 +69,20 @@ export default function Chats() {
         {isModalOn && <UserListModal callback={callbackfunc} />}
       </div>
       <h2>list of chats</h2>
-      <div className={styles.list}>
-        {chats.map((item: ChatType) => (
-          <NavLink
-            to={`/chats/${item._id}`}
-            key={item._id}
-            className={styles.chatItem}
-          >
-            {item.name}
-          </NavLink>
-        ))}
-      </div>
+      {chats.length > 0 && (
+        <div className={styles.list}>
+          {chats.map((item: ChatType) => (
+            <NavLink
+              to={`/chats/${item._id}`}
+              key={item._id}
+              className={styles.chatItem}
+            >
+              {item.name}
+            </NavLink>
+          ))}
+        </div>
+      )}
+      {chats.length === 0 && <div>no chats</div>}
       <button className={styles.signOut} onClick={handleSignOut}>
         sign out
       </button>

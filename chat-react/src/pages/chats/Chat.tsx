@@ -67,27 +67,31 @@ const Chat = () => {
   }, []);
 
   if (!chatId || !chatState) return <div>error</div>;
-  if (!messages) return <div>no messages yet</div>;
 
   return (
     <div>
+      {JSON.stringify(messages?.length)}
       <h2>Чат ID: {chatId}</h2>
       <div>
         E(edit) - редактировать, D(delete) - удалить, S(send) - отправить
       </div>
-      <div className={styles.messageList}>
-        {messages.map((msg: MessageType) => {
-          return (
-            <Message
-              key={msg._id}
-              msg={msg}
-              isPersonal={msg.userId === user._id}
-              chat={chatState}
-              setMessages={setMessages}
-            />
-          );
-        })}
-      </div>
+      {messages.length > 0 && (
+        <div className={styles.messageList}>
+          {messages.map((msg: MessageType) => {
+            return (
+              <Message
+                key={msg._id}
+                msg={msg}
+                isPersonal={msg.userId === user._id}
+                chat={chatState}
+                setMessages={setMessages}
+              />
+            );
+          })}
+        </div>
+      )}
+
+      {messages.length === 0 && <div>no messages yet</div>}
 
       <div className={styles.inputForm}>
         <input

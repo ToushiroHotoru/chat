@@ -11,17 +11,21 @@ export class AuthService {
   constructor(private UserService: UserService) {}
 
   async login(body: LoginDto) {
-    const { login, password } = body;
-    const isExists: UserDto | null =
-      await this.UserService.readOneByLogin(login);
-    if (!isExists) throw new ForbiddenException('User not found');
+    try {
+      const { login, password } = body;
+      const isExists: UserDto | null =
+        await this.UserService.readOneByLogin(login);
+      if (!isExists) throw new ForbiddenException('User not found');
 
-    const isValidPass: boolean = isExists.password === password;
-    if (!isValidPass) throw new ForbiddenException('Invalid password');
+      const isValidPass: boolean = isExists.password === password;
+      if (!isValidPass) throw new ForbiddenException('Invalid password');
 
-    const token = jwt.sign({ ...isExists }, 'shhhhh');
+      const token = jwt.sign({ ...isExists }, 'shhhhh');
 
-    return { jwt: token };
+      return { jwt: token };
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   async register(body: RegisterDto) {

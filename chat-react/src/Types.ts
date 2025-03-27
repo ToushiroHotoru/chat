@@ -14,6 +14,7 @@ export type MessageType = {
   _id: string;
   index: number;
   text: string;
+  isEdited: boolean;
   chatId: string;
   userId: string;
   createdAt: Date;
